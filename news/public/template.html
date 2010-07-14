@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html><head>
+    <title>News service</title>
+    
+    <style>
+        html, body {
+            margin:0;
+            border:none;
+            padding:0;
+            font-size:12px;
+            font-family:Helvetica, sans-serif;
+            color:#404040;
+        }
+        
+        #wrapper {
+            width:500px;
+            margin:0 auto;
+        }
+        
+        #news-items {
+            border-top:1px solid #ccc;
+        }
+        
+        .news-item {
+            border-bottom:1px solid #ccc;
+            padding:10px 0;
+        }
+        
+        .update {
+            background:#f8dee7;
+        }
+        
+        .timestamp {
+            margin:0;
+            text-align:right;
+            font-size:10px;
+        }
+    </style>
+    
+    <script src="http://js.othermedia.com/helium.js"></script>
+    <script>
+        Helium.use('yui', '2.8.0r4');
+        Helium.use('ojay', '0.4.2');
+        
+        JS.Packages(function() {
+            this.file('helpers.js')
+                     .provides('NewsService', 'insertNewsItem')
+                     .requires('Ojay', 'Ojay.Observable', 'Ojay.HTTP', 'Ojay.HTML');
+        });
+    </script>
+</head><body><div id="wrapper">
+    
+    <h1>News service</h1>
+    
+    <div id="news-items"></div>
+    
+    <script>
+        require('NewsService', 'insertNewsItem', function() {
+            var newsService = new NewsService();
+            
+            newsService.on('data', function(s, items) {
+                // Do stuff!
+                console.log(items);
+            });
+        });
+    </script>
+    
+</div></body></html>
