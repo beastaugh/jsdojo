@@ -8,8 +8,9 @@ $ticker    = START_TIME
 $counter   = 0
 
 news_items = []
+raw_items  = File.read('data/lipsum.txt').lines.to_a
 
-File.read('data/lipsum.txt').lines.to_a.each_with_index do |line, i|
+raw_items.each_with_index do |line, i|
   t        = Time.now.to_i - rand(7200) - 3600 * i
   hashfunc = Digest::SHA1.new
   
@@ -23,14 +24,13 @@ File.read('data/lipsum.txt').lines.to_a.each_with_index do |line, i|
     :id => hashfunc.hexdigest
   }
   
-  # item[:update] = true if update?
-  
   news_items << item
 end
 
 partion_length = 0
+duplicates = []
 
-NEWS_ITEMS = news_items.reverse.inject([[]]) {|memo, item|
+news_item_groups = news_items.reverse.inject([[]]) {|memo, item|
   if partion_length < 1
     partion_length = rand(3)
     memo << [] if partion_length == 0
@@ -39,9 +39,26 @@ NEWS_ITEMS = news_items.reverse.inject([[]]) {|memo, item|
     partion_length -= 1
   end
   
+  # Duplicate, 'updated' item
+  if rand(10) == 0
+    dupe = item.clone
+    dupe[:update] = true
+    duplicates << {
+      :obj => dupe,
+      :index => memo.length + 2 + rand(5)
+    }
+  end
+  
   memo.last << item
   memo
 }
+
+duplicates.each do |obj|
+  group = news_item_groups[obj[:index]]
+  (group ? group : news_item_groups.last) << obj[:obj]
+end
+
+NEWS_ITEMS = news_item_groups
 
 $counter = NEWS_ITEMS.length - 1
 
