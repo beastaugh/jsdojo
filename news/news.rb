@@ -3,7 +3,6 @@ require 'json'
 
 require 'sinatra'
 
-NEWS_ITEMS = []
 START_TIME = Time.now
 $ticker    = START_TIME
 $counter   = 0

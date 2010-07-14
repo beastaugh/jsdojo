@@ -5,7 +5,7 @@ NewsService = new JS.Class('NewsService', {
         var service = this;
         
         setInterval(function() {
-            Ojay.HTTP.GET('http://wp.dev:4567/news.json', {jsonp: 'callback'}, {
+            Ojay.HTTP.GET('http://beastaugh.othermedia.com:4567/news.json', {jsonp: 'callback'}, {
                 onSuccess: function(data) {
                     service.notifyObservers('data', data);
                 }
