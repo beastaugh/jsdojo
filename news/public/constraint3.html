@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html><head>
+    <title>News service: constraint 3</title>
+    
+    <link rel="stylesheet" href="news.css">
+</head><body><div id="wrapper">
+    
+    <h1>Constraint 3</h1>
+    
+    <p>
+        Contrary to constraint 1, some duplicate items <em>should</em> appear
+        to the user. These are <em>updates</em> to previous items.
+    </p>
+    
+    <p>
+        They have an update flag set on the object, e.g.
+    </p>
+    
+    <pre>{
+    "text":      "Text of the news item...",
+    "timestamp": 1279192986,
+    "id":        "1377294734da555d72ad407cac9e4b83e1cba172",
+    "update":    true
+}</pre>
+    
+    <p>
+        <strong>Updates should be inserted into the document.</strong>
+    </p>
+    
+</div></body></html>

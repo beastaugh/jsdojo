@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html><head>
+    <title>News service: introduction</title>
+    
+    <link rel="stylesheet" href="news.css">
+</head><body><div id="wrapper">
+    
+    <h1>Introduction</h1>
+    
+    <p>
+        The basic problem you have to solve is: <strong>write a frontend for a
+        live news service</strong>. It should display each news item to the
+        user as it arrives.
+    </p>
+    
+    <p>
+        A server has been set up to provide the news feed. You can access the
+        data here:
+    </p>
+    
+    <p>
+        <code>http://beastaugh.othermedia.com:4567/news.json</code>
+    </p>
+    
+    <p>
+        The <strong>template page</strong> contains three pieces of JavaScript
+        to get you started: the <code>NewsService</code> class and two helper
+        functions, <code>makeNewsItemHTML</code> and
+        <code>insertNewsItem</code>.
+    </p>
+    
+    <p>
+        <code>http://beastaugh.othermedia.com:4567/template.html</code>
+    </p>
+    
+    <p>
+        View source and copy the contents into a local file.
+    </p>
+    
+    <p>
+        The basic idea: create a new instance of the <code>NewsService</code>
+        class and use the <code>on</code> method to listen to the
+        <code>data</code> event. A skeleton is provided on the template page.
+    </p>
+    
+    <p>
+        The news service provides a list of zero or more news items. You need
+        to insert these into the page as they arrive. Call the
+        <code>makeNewsItemHTML</code> helper function with one argument (a news
+        item object) to create a DOM representation of the news item.
+    </p>
+    
+    <p>
+        You can use the <code>insertNewsItem</code> helper function to insert
+        that DOM element into the document. Pass in another DOM element as a
+        second argument to insert the news item <em>after</em> that element.
+    </p>
+    
+    <p>
+        News items have the following structure:
+    </p>
+    
+    <pre>{
+    "text":      "Text of the news item...",
+    "timestamp": 1279192986,
+    "id":        "1377294734da555d72ad407cac9e4b83e1cba172"
+}</pre>
+    
+    <p>
+        There are <strong>three</strong> additional constraints. You have
+        <strong>ten minutes</strong> to meet each constraint, after which the
+        next constraint will be provided.
+    </p>
+    
+</div></body></html>
