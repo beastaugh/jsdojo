@@ -18,14 +18,19 @@ NewsService = new JS.Class('NewsService', {
     }
 });
 
-insertNewsItem = function(newsItem, element) {
-    var newsItemHTML = Ojay.HTML.div({
-        className: 'news-item' + (newsItem.update ? ' update' : '')
-    }, function(H) {
+makeNewsItemHTML = function(newsItem, klass) {
+    var className = ['news-item'];
+    
+    if (klass) className.push(klass);
+    if (newsItem.update) className.push('update');
+    
+    return Ojay.HTML.div({className: className.join(' ')}, function(H) {
         H.p(newsItem.text);
         H.p({className: 'timestamp'}, newsItem.timestamp.toString());
     });
-    
+};
+
+insertNewsItem = function(newsItemHTML, element) {
     if (element) {
         Ojay(element).insert(newsItemHTML, 'after');
     } else {
