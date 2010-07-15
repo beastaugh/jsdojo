@@ -7,8 +7,10 @@ START_TIME = Time.now
 $ticker    = START_TIME
 $counter   = 0
 
+dir = File.expand_path(File.dirname(__FILE__))
+
 news_items = []
-raw_items  = File.read('data/lipsum.txt').lines.to_a
+raw_items  = File.read(dir + '/data/lipsum.txt').lines.to_a
 
 raw_items.each_with_index do |line, i|
   t        = Time.now.to_i - rand(7200) - 3600 * i
@@ -42,7 +44,13 @@ news_item_groups = news_items.reverse.inject([[]]) {|memo, item|
   # Duplicate, 'updated' item
   if rand(10) == 0
     dupe = item.clone
-    dupe[:update] = true
+    
+    if rand(2) == 0
+      dupe[:update] = true
+      dupe[:text] += " Updated!"
+      dupe[:timestamp] += (rand(3600) * 3)
+    end
+    
     duplicates << {
       :obj => dupe,
       :index => memo.length + 2 + rand(5)
@@ -78,7 +86,11 @@ get '/news.json' do
     content = [].to_json
   end
   
-  content_type 'application/javascript', :charset => "utf-8"
-  
-  callback ? callback + "(" + content + ");" : content
+  if callback
+    content_type 'application/javascript', :charset => "utf-8"
+    callback + "(" + content + ");"
+  else
+    content_type 'application/json', :charset => "utf-8"
+    content
+  end
 end
