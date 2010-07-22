@@ -3,72 +3,88 @@ require 'json'
 
 require 'sinatra'
 
-START_TIME = Time.now
-$ticker    = START_TIME
-$counter   = 0
+ROOT_DIR = File.expand_path(File.dirname(__FILE__))
 
-dir = File.expand_path(File.dirname(__FILE__))
-
-news_items = []
-raw_items  = File.read(dir + '/data/lipsum.txt').lines.to_a
-
-raw_items.each_with_index do |line, i|
-  t        = Time.now.to_i - rand(7200) - 3600 * i
-  hashfunc = Digest::SHA1.new
+def make_news_items(dir)
+  items = []
   
-  line.rstrip!
-  
-  hashfunc.update(line + t.to_s)
-  
-  item = {
-    :text => line,
-    :timestamp => t,
-    :id => hashfunc.hexdigest
-  }
-  
-  news_items << item
-end
-
-partion_length = 0
-duplicates = []
-
-news_item_groups = news_items.reverse.inject([[]]) {|memo, item|
-  if partion_length < 1
-    partion_length = rand(3)
-    memo << [] if partion_length == 0
-    memo << []
-  else
-    partion_length -= 1
+  File.readlines(dir + '/data/lipsum.txt').each_with_index do |line, i|
+    t        = Time.now.to_i - rand(7200) - 3600 * i
+    hashfunc = Digest::SHA1.new
+    
+    line.rstrip!
+    
+    hashfunc.update(line + t.to_s)
+    
+    item = {
+      :text => line,
+      :timestamp => t,
+      :id => hashfunc.hexdigest
+    }
+    
+    items << item
   end
   
-  # Duplicate, 'updated' item
-  if rand(10) == 0
-    dupe = item.clone
-    
-    if rand(2) == 0
-      dupe[:update] = true
-      dupe[:text] += " Updated!"
-      dupe[:timestamp] += (rand(3600) * 3)
+  items
+end
+
+def partition_news_items(items)
+  partition_length = 0
+  
+  items.inject([[]]) do |memo, item|
+    if partition_length < 1
+      partition_length = rand(3)
+      memo << [] if partition_length == 0
+      memo << []
+    else
+      partition_length -= 1
     end
     
-    duplicates << {
-      :obj => dupe,
-      :index => memo.length + 2 + rand(5)
-    }
+    memo.last << item
+    
+    memo
   end
-  
-  memo.last << item
-  memo
-}
-
-duplicates.each do |obj|
-  group = news_item_groups[obj[:index]]
-  (group ? group : news_item_groups.last) << obj[:obj]
 end
 
-NEWS_ITEMS = news_item_groups
+def make_duplicates(item_groups)
+  duplicates = []
+  
+  item_groups.each do |group|
+    group.each do |item|
+      next unless rand(10) == 0
+      
+      dupe = item.clone
+      
+      if rand(2) == 0
+        dupe[:update] = true
+        dupe[:text] += " Updated!"
+        dupe[:timestamp] += (rand(3600) * 3)
+      end
+      
+      duplicates << {
+        :duplicate => dupe,
+        :index => group.length + 2 + rand(5)
+      }
+    end
+  end
+  
+  duplicates
+end
 
-$counter = NEWS_ITEMS.length - 1
+def insert_duplicates!(groups, duplicates)
+  duplicates.each do |dupe|
+    group = groups[dupe[:index]]
+    (group ? group : items.last) << dupe[:duplicate]
+  end
+end
+
+groups = partition_news_items(make_news_items(ROOT_DIR))
+dupes  = make_duplicates(groups)
+insert_duplicates!(groups, dupes)
+
+NEWS_ITEMS = groups
+$ticker    = Time.now
+$counter   = groups.length - 1
 
 get '/news.json' do
   t = Time.now
